@@ -1,0 +1,4 @@
+aarch64 -> arm64
+armv7a -> armeabi
+i686 -> x86
+x86_64 -> x86_64
