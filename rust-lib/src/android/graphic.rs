@@ -24,16 +24,12 @@ impl AndroidBitmapInfo {
 extern "C" {
     #[link_name = "AndroidBitmap_getInfo"]
     pub fn bitmap_get_info(
-        env: *mut jni::sys::JNIEnv,
-        bmp: jobject,
-        info: *mut AndroidBitmapInfo,
+        env: *mut jni::sys::JNIEnv, bmp: jobject, info: *mut AndroidBitmapInfo,
     ) -> c_int;
 
     #[link_name = "AndroidBitmap_lockPixels"]
     pub fn bitmap_lock_pixels(
-        env: *mut jni::sys::JNIEnv,
-        bmp: jobject,
-        pixels: *mut *mut c_void,
+        env: *mut jni::sys::JNIEnv, bmp: jobject, pixels: *mut *mut c_void,
     ) -> c_int;
 
     #[link_name = "AndroidBitmap_unlockPixels"]

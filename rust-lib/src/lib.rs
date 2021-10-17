@@ -35,8 +35,9 @@ pub mod android {
         // Lock pixel for draw
         graphic::bitmap_lock_pixels(raw_env, bmp, &mut pixels);
 
-        let pixels =
-            std::slice::from_raw_parts_mut(pixels as *mut u8, (info.stride * info.height) as usize);
+        let pixels = std::slice::from_raw_parts_mut(
+            pixels as *mut u8, (info.stride * info.height) as usize
+        );
 
         fractal::render(pixels, info.width as u32, info.height as u32);
         graphic::bitmap_unlock_pixels(raw_env, bmp);
