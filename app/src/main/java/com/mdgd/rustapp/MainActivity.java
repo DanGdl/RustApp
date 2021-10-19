@@ -13,14 +13,25 @@ public class MainActivity extends AppCompatActivity {
 
     private native void renderFractal(Bitmap bitmap);
 
+    private FractalView image;
+    private final Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            image.updateAngle();
+            image.invalidate();
+            image.postDelayed(this, 500);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // final ImageView imageView = findViewById(R.id.imageView);
+        image = findViewById(R.id.imageView);
+        // final ImageView image = findViewById(R.id.imageView);
         // final Bitmap bitmap = Bitmap.createBitmap(800, 800, Bitmap.Config.ARGB_8888);
         // renderFractal(bitmap);
         // imageView.setImageBitmap(bitmap);
+        image.postDelayed(r, 500);
     }
 }
