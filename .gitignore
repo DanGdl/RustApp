@@ -87,3 +87,5 @@ lint/tmp/
 /gradle/wrapper/gradle-wrapper.jar
 /rust-lib/target/
 /rust-lib/Cargo.lock
+/rust-lib/.idea/
+/rust-lib/.vscode/
