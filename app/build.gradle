@@ -6,7 +6,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.mdgd.rustapp2"
+        applicationId "com.mdgd.rustapp3"
         minSdk 23
         targetSdk 31
         versionCode 1

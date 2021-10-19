@@ -4,12 +4,12 @@
 pub mod android {
     extern crate jni;
 
-    use super::*;
+    // use super::*;
     use self::jni::JNIEnv;
-    use self::jni::objects::{JString, JClass, JObject};
+    use self::jni::objects::{/*JString,*/ JClass, JObject};
     use self::jni::sys::jstring;
     use std::ffi::CString;
-    use std::os::raw::c_void;
+    use std::os::raw::{c_void, c_int};
 
     mod fractal;
     mod graphic;
@@ -22,7 +22,7 @@ pub mod android {
     }
 
     #[no_mangle]
-    pub unsafe extern fn Java_com_mdgd_rustapp_MainActivity_renderFractal(env: JNIEnv, _: JClass, bmp: JObject) {
+    pub unsafe extern fn Java_com_mdgd_rustapp_MainActivity_renderFractal(env: JNIEnv, _: JClass, bmp: JObject, angle: c_int) {
         let mut info = graphic::AndroidBitmapInfo::new();
         let raw_env = env.get_native_interface();
 
@@ -39,7 +39,7 @@ pub mod android {
             pixels as *mut u8, (info.stride * info.height) as usize
         );
 
-        fractal::render(pixels, info.width as u32, info.height as u32);
+        fractal::render(pixels, info.width as u32, info.height as u32, angle);
         graphic::bitmap_unlock_pixels(raw_env, bmp);
     }
 }

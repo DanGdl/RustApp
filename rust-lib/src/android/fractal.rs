@@ -1,48 +1,35 @@
 extern crate image;
-extern crate num_complex;
 
-pub unsafe fn render<'a>(pixels: &mut [u8], width: u32, height: u32) {
-    let scale_x = 3.0 / width as f32;
-    let scale_y = 3.0 / height as f32;
+const MAX_ITERATIONS: i32 = 50;
+const RADIUS: f64 = 0.7885;
 
-    // Create a new ImgBuf with width: imgx and height: imgy
-    let mut imgbuf = image::ImageBuffer::new(width, height);
+pub unsafe fn render<'a>(pixels: &mut [u8], width: u32, height: u32, angle: i32) {
+    let total = width * height;
+    let mid_x: f64 = width as f64 / 2.0;
+    let mid_y: f64 = height as f64 / 2.0;
 
-    // Iterate over the coordinates and pixels of the image
-    for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-        let r = (0.3 * x as f32) as u8;
-        let b = (0.3 * y as f32) as u8;
-        *pixel = image::Rgb([r, 0, b]);
-    }
+    let a: f64 = (angle as f64 % 360.0).to_radians();
+    let c_x: f64 = RADIUS * a.cos();
+    let c_y: f64 = RADIUS * a.sin();
+    let val: f64 = 255 as f64 / (MAX_ITERATIONS as f64);
 
-    // A redundant loop to demonstrate reading image data
-    for x in 0..width {
-        for y in 0..height {
-            let cx = y as f32 * scale_x - 1.5;
-            let cy = x as f32 * scale_y - 1.5;
+    for idx in 0..total {
+        let x = (idx % width) as i32;
+        let y = (idx / width) as i32;
 
-            let c = num_complex::Complex::new(-0.4, 0.6);
-            let mut z = num_complex::Complex::new(cx, cy);
-
-            let mut i = 0;
-            while i < 255 && z.norm() <= 2.0 {
-                z = z * z + c;
-                i += 1;
-            }
-
-            let pixel = imgbuf.get_pixel_mut(x, y);
-            let image::Rgb(data) = *pixel;
-            *pixel = image::Rgb([data[0], i as u8, data[2]]);
+        let mut zx: f64 = (2 * x - width as i32) as f64 / mid_x;
+        let mut zy: f64 = (2 * y - height as i32) as f64 / mid_y;
+        let mut i = 0;
+        while i < MAX_ITERATIONS && (zx * zx + zy * zy) <= 4.0 {
+            let tmp_zx: f64 = zx * zx - zy * zy + c_x;
+            zy = 2.0 * zx * zy + c_y;
+            zx = tmp_zx;
+            i += 1;
         }
+        let p_idx = 4 * idx as usize;
+        pixels[p_idx] = (x * 255 / width as i32) as u8;
+        pixels[p_idx + 1] = (val * i as f64) as u8;
+        pixels[p_idx + 2] = (y * 255 / height as i32) as u8;
+        pixels[p_idx + 3] = 255;
     }
-
-    imgbuf.pixels().enumerate().for_each(|(i, pixel)| {
-        let idx = 4 * i as usize;
-        let [r, g, b] = pixel.0;
-
-        pixels[idx] = r;
-        pixels[idx + 1] = g;
-        pixels[idx + 2] = b;
-        pixels[idx + 3] = 255;
-    });
 }
